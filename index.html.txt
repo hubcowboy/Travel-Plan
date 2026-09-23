@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>福冈7天旅行计划｜9.29–10.05</title>
+
+<style>
+  :root {
+    --bg: #fafaf7;
+    --card: #ffffff;
+    --text: #1f2430;
+    --muted: #6b7280;
+    --border: #eaeaea;
+    --line: #d9d9d9;
+    --primary: #2f6feb;
+    --accent: #ff8a3d;
+    --soft-blue: #eef4ff;
+  }
+
+  .dark {
+    --bg: #121418;
+    --card: #1b1e24;
+    --text: #f1f3f7;
+    --muted: #9aa0a6;
+    --border: #2a2d33;
+    --line: #3a3d44;
+    --primary: #5b8def;
+    --accent: #ffa15c;
+    --soft-blue: #1b2435;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+      "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: background 0.3s, color 0.3s;
+    padding: 18px;
+  }
+
+  .container {
+    max-width: 880px;
+    margin: 0 auto;
+  }
+
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+
+  h1 {
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  #themeToggle {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  /* ===== 极简路线总览 SVG ===== */
+  .route-overview {
+    width: 100%;
+    border-radius: 12px;
+    background: #f4f4f1;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .dark .route-overview {
+    background: #16181c;
+  }
+
+  .route-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .meta-pill {
+    background: var(--soft-blue);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--primary);
+  }
+
+  .dot.accent {
+    background: var(--accent);
+  }
+
+  /* ===== 机票卡片 ===== */
+  .flight-card {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 12px;
+    align-items: center;
+    padding: 14px;
+    background: var(--soft-blue);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .flight-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .flight-cell.right {
+    text-align: right;
+  }
+
+  .flight-code {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .flight-route {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .flight-time {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .flight-date {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .flight-arrow {
+    font-size: 22px;
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  /* ===== 每日折叠行程 ===== */
+  .day-header {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 10px;
+  }
+
+  .day-header h3 {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .day-content {
+    padding: 4px 10px 14px;
+    display: none;
+  }
+
+  .day-content.open {
+    display: block;
+  }
+
+  .time-item {
+    border-left: 3px solid var(--primary);
+    padding-left: 14px;
+    margin: 14px 0;
+  }
+
+  .time-label {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 6px;
+    font-size: 12px;
+    margin-right: 5px;
+    color: #fff;
+    font-weight: 500;
+  }
+
+  .tag-must {
+    background: #f59e0b;
+  }
+
+  .tag-cafe {
+    background: #10b981;
+  }
+
+  .tag-food {
+    background: #ef4444;
+  }
+
+  .tag-sight {
+    background: #8b5cf6;
+  }
+
+  .tag-opt {
+    background: #eab308;
+    color: #111;
+  }
+
+  .link {
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  .link:hover {
+    text-decoration: underline;
+  }
+
+  p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .traffic {
+    background: var(--soft-blue);
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    border-radius: 10px;
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  .warning {
+    background: #fff7e0;
+    border: 1px solid #f1d68a;
+    color: #8a5a00;
+    padding: 10px 12px;
+    border-radius: 10px;
+    margin: 10px 0;
+    font-size: 14px;
+  }
+
+  .dark .warning {
+    background: #3a2f12;
+    border-color: #5c4a20;
+    color: #f1d68a;
+  }
+
+  ul {
+    padding-left: 20px;
+  }
+
+  li {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .footer-note {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 10px;
+  }
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <div class="topbar">
+    <h1>福冈7天旅行计划｜9.29–10.05</h1>
+    <button id="themeToggle">🌓 浅色 / 深色</button>
+  </div>
+
+  <!-- ====================== 1. 极简路线总览 SVG ====================== -->
+  <div class="card">
+    <h2>路线总览</h2>
+
+    <svg class="route-overview" viewBox="0 0 840 340" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <style>
+          .map-bg { fill: #f4f4f1; }
+          .land { fill: #ecece8; stroke: #d6d6d2; stroke-width: 1; }
+          .coast { fill: none; stroke: #c7c7c3; stroke-width: 1; }
+          .route-main { fill: none; stroke: #2f6feb; stroke-width: 3; stroke-linecap: round; }
+          .route-dashed { fill: none; stroke: #2f6feb; stroke-width: 2; stroke-dasharray: 5 5; }
+          .node { fill: #ffffff; stroke: #2f6feb; stroke-width: 3; }
+          .node-accent { fill: #ff8a3d; stroke: #ffffff; stroke-width: 3; }
+          .label-bg { fill: rgba(255,255,255,0.85); }
+          .label-text { fill: #1f2430; font-size: 13px; font-family: -apple-system, "PingFang SC", sans-serif; }
+          .day-text { fill: #1f2430; font-size: 12px; font-weight: 700; font-family: -apple-system, "PingFang SC", sans-serif; }
+          .muted-text { fill: #6b7280; font-size: 11px; font-family: -apple-system, "PingFang SC", sans-serif; }
+        </style>
+      </defs>
+
+      <!-- 背景 -->
+      <rect class="map-bg" width="840" height="340" />
+
+      <!-- 简化海岸线与陆地轮廓 -->
+      <path class="coast" d="M60,260 C120,220 200,230 280,210 C360,190 440,170 520,150 C600,130 680,110 760,90 L800,80 L820,140 C780,180 720,220 640,240 C560,260 460,270 360,260 C260,250 160,240 80,260 Z" />
+      <path class="land" d="M60,260 C120,220 200,230 280,210 C360,190 440,170 520,150 C600,130 680,110 760,90 L800,80 L820,140 C780,180 720,220 640,240 C560,260 460,270 360,260 C260,250 160,240 80,260 Z" />
+
+      <!-- 出发地 / 目的地 -->
+      <circle cx="70" cy="60" r="10" class="node-accent" />
+      <text x="70" y="35" text-anchor="middle" class="label-text">香港 HKG</text>
+
+      <circle cx="770" cy="70" r="10" class="node-accent" />
+      <text x="770" y="45" text-anchor="middle" class="label-text">福冈 FUK</text>
+
+      <!-- 住宿 -->
+      <circle cx="620" cy="170" r="7" class="node" />
+      <rect x="540" y="180" width="170" height="24" rx="8" class="label-bg" />
+      <text x="625" y="197" class="label-text">🏨 祇园 BOUNCEE 酒店</text>
+
+      <!-- 每日路线 -->
+      <path class="route-main" d="M70,60 C200,90 400,130 620,170" />
+      <text x="340" y="110" class="muted-text">HX0640 飞机</text>
+
+      <!-- Day1 博多/中洲 -->
+      <circle cx="640" cy="190" r="5" class="node" />
+      <text x="640" y="210" text-anchor="middle" class="day-text">Day1</text>
+      <text x="640" y="224" text-anchor="middle" class="muted-text">博多·中洲</text>
+
+      <!-- Day2 太宰府 -->
+      <circle cx="540" cy="230" r="5" class="node" />
+      <text x="540" y="250" text-anchor="middle" class="day-text">Day2</text>
+      <text x="540" y="264" text-anchor="middle" class="muted-text">太宰府</text>
+      <text x="570" y="220" class="muted-text">JR/西铁</text>
+
+      <!-- Day3 糸岛 -->
+      <circle cx="420" cy="180" r="5" class="node" />
+      <text x="420" y="160" text-anchor="middle" class="day-text">Day3</text>
+      <text x="420" y="146" text-anchor="middle" class="muted-text">樱井神社·二见浦</text>
+      <text x="480" y="170" class="muted-text">JR筑肥线+巴士</text>
+
+      <!-- Day4 大濠/舞鹤/六本松 -->
+      <circle cx="600" cy="210" r="5" class="node" />
+      <text x="600" y="230" text-anchor="middle" class="day-text">Day4</text>
+      <text x="600" y="244" text-anchor="middle" class="muted-text">大濠·舞鹤·六本松</text>
+      <text x="560" y="200" class="muted-text">地铁+步行</text>
+
+      <!-- Day5 机动日 -->
+      <circle cx="560" cy="200" r="5" class="node" />
+      <text x="510" y="200" class="day-text">Day5</text>
+      <text x="470" y="214" class="muted-text">百道海滨 / 能古岛</text>
+
+      <!-- Day6 博多旧市街 -->
+      <circle cx="660" cy="200" r="5" class="node" />
+      <text x="690" y="200" class="day-text">Day6</text>
+      <text x="700" y="214" class="muted-text">博多旧市街·美食</text>
+
+      <!-- Day7 返程 -->
+      <path class="route-main" d="M660,200 C700,170 740,120 770,70" />
+      <text x="710" y="150" class="muted-text">HX0641 飞机</text>
+      <circle cx="770" cy="70" r="5" class="node" />
+      <text x="770" y="90" text-anchor="middle" class="day-text">Day7</text>
+    </svg>
+
+    <div class="route-meta">
+      <span class="meta-pill"><span class="dot accent"></span>出发 / 到达</span>
+      <span class="meta-pill"><span class="dot"></span>每日路线</span>
+      <span class="meta-pill">✈️ 飞机</span>
+      <span class="meta-pill">🚇 地铁</span>
+      <span class="meta-pill">🚃 JR</span>
+      <span class="meta-pill">🚌 巴士</span>
+      <span class="meta-pill">🚶 步行</span>
+      <span class="meta-pill">⛴️ 船</span>
+    </div>
+  </div>
+
+  <!-- ====================== 2. 航班信息 ====================== -->
+  <div class="card">
+    <h2>航班信息</h2>
+    <div class="flight-card">
+      <div class="flight-cell">
+        <div class="flight-code">去程 HX0640</div>
+        <div class="flight-route">香港 HKG T2 → 福冈 FUK I</div>
+      </div>
+      <div class="flight-arrow">→</div>
+      <div class="flight-cell right">
+        <div class="flight-time">10:20 – 15:00</div>
+        <div class="flight-date">2026-09-29</div>
+      </div>
+    </div>
+
+    <div class="flight-card" style="margin-top:12px;">
+      <div class="flight-cell">
+        <div class="flight-code">返程 HX0641</div>
+        <div class="flight-route">福冈 FUK I → 香港 HKG T1</div>
+      </div>
+      <div class="flight-arrow">→</div>
+      <div class="flight-cell right">
+        <div class="flight-time">16:00 – 18:45</div>
+        <div class="flight-date">2026-10-05</div>
+      </div>
+    </div>
+
+    <p class="footer-note">机票总额：CNY 3161｜票价 CNY 2040 + 税费 CNY 1121</p>
+  </div>
+
+  <!-- ====================== 3. 每日行程 ====================== -->
+  <div class="card">
+    <h2>每日行程</h2>
+
+    <div class="day-header">
+      <h3>Day1｜09-29 抵达｜博多·祇园·中洲</h3>
+      <span>+</span>
+    </div>
+    <div class="day-content">
+      <div class="time-item">
+        <div class="time-label">15:00 抵达福冈机场，前往酒店入住</div>
+        <div class="traffic">🚇 福冈机场 → 地铁空港线祇園站，约12分钟；出站步行5分钟到酒店</div>
+      </div>
+      <div class="time-item">
+        <div class="time-label">17:00 <span class="tag tag-must">⭐ Must Go</span> <a class="link" href="#">栉田神社 Kushida Shrine</a></div>
+        <p>酒店步行3分钟，傍晚人流较少</p>
+      </div>
+      <div class="time-item">
+        <div class="time-label">18:30 <span class="tag tag-must">⭐ Must Go</span> <a class="link" href="#">中洲屋台街</a> 晚餐</div>
+        <div class="traffic">🚇 栉田神社步行8分钟，晚餐后步行回酒店</div>
+      </div>
+    </div>
+
+    <div class="day-header">
+      <h3>Day2｜09-30 太宰府天满宫</h3>
+      <span>+</span>
+    </div>
+    <div class="day-content">
+      <div class="time-item">
+        <div class="time-label">08:30 酒店出发前往太宰府</div>
+        <div class="traffic">🚇 櫛田神社前站 → 博多站约8分钟；JR/西铁太宰府线 → 太宰府站约16分钟，单程约30分钟</div>
+      </div>
+      <div class="time-item">
+        <div class="time-label">09:30 <span class="tag tag-must">⭐ Must Go</span> <a class="link" href="#">太宰府天满宫 Dazaifu Tenmangu</a></div>
+      </div>
+      <div class="time-item">
+        <div class="time-label">12:00 <span class="tag tag-cafe">☕ Cafe</span> 太宰府兎珈琲 + SAWAWA 抹茶甜品</div>
+      </div>
+      <div class="time-item">
+        <div class="time-label"><span class="tag tag-opt">🟡 Optional</span> 九州国立博物馆</div>
+        <p>从天满宫步行可达；建议最多选一处博物馆参观。</p>
+      </div>
+      <div class="time-item">
+        <div class="time-label">15:30 返程回博多；晚餐：祇园 Daitoen Hanare Giontei 烧肉</div>
+        <div class="traffic">🚇 太宰府JR返回博多，转地铁回祇园酒店</div>
+      </div>
+    </div>
+
+    <div class="day-header">
+      <h3>Day3｜10-01 糸岛 Itoshima｜樱井神社 & 二见浦</h3>
+      <span>+</span>
+    </div>
+    <div class="day-content">
+      <div class="warning">⚠️ 糸岛社区巴士班次极少，约1小时2–3班。建议07:40出门，15:40前从二见浦返程；出行前一天核对巴士时刻表。</div>
+      <div class="time-item">
+        <div class="time-label">07:40 酒店出发</div>
+        <div class="traffic">🚇 櫛田神社前站 → 天神站约6分钟；JR筑肥线往唐津方向 → 筑前前原站约45分钟，出站换乘糸岛社区巴士</div>
+      </div>
+      <div class="time-item">
+        <div class="time-label">09:10 <span class="tag tag-must">⭐ Must Go</span> <a class="link" href="#">樱井神社 Sakurai Shrine</a></div>
+        <p>筑前前原巴士约25分钟抵达</p>
+      </div>
+      <div class="time-item">
+        <div class="time-label">11:30 <span class="tag tag-must">⭐ Must Go</span> <a class="link" href="#">二見ヶ浦浜 Futamigaura 夫妇岩</a></div>
+        <div class="traffic">🚇 樱井神社巴士前往二见浦约20分钟</div>
+      </div>
+      <div class="time-item">
+        <div class="time-label"><span class="tag tag-opt">🟡 Optional</span> 七釜洞窟 Nanatsugama</div>
+        <p>二见浦继续巴士约25分钟；往返额外消耗较多等车时间，时间充裕才考虑。</p>
+      </div>
+      <div class="time-item">
+        <div class="time-label">15:40 巴士返回筑前前原，返程回福冈市区</div>
+        <div class="traffic">🚇 筑前前原JR返回天神，地铁回祇园，预计17:30回到市区休整</div>
+      </div>
+    </div>
+
+    <div class="day-header">
+      <h3>Day4｜10-02 大濠公园·舞鹤公园·六本松</h3>
+      <span>+</span>
+    </div>
+    <div class="day-content">
+      <div class="time-item">
+        <div class="time-label">09:00 <span class="tag tag-cafe">☕ Cafe</span> <a class="link" href="#">Ohori Terrace</a> 晨间咖啡</div>
+        <div class="traffic">🚇 櫛田神社前站七隈线 → 大濠公园站约10分钟</div>
+      </div>
+      <div class="time-item">
+        <div class="time-label">10:00 <span class="tag tag-must">⭐ Must Go</span> <a class="link" href="#">大濠公园环湖 + 日式庭园</a></div>
+      </div>
+      <div class="time-item">
+        <div class="time-label"><span class="tag tag-opt">🟡 Optional</span> 福冈美术馆</div>
+        <p>大濠公园内步行可达；建议最多选一处博物馆参观。</p>
+      </div>
+      <div class="time-item">
+        <div class="time-label">14:30 <span class="tag tag-must">⭐ Must Go</span> <a class="link" href="#">福冈城迹 + 舞鹤公园</a></div>
+        <p>大濠公园步行串联，无需再次换乘。</p>
+      </div>
+      <div class="time-item">
+        <div class="time-label">17:00 前往六本松 <span class="tag tag-cafe">☕ Cafe</span> Basking Coffee ropponmatsu</div>
+        <div class="traffic">🚇 大濠公园站地铁一站 → 六本松站约3分钟</div>
+      </div>
+      <div class="time-item">
+        <div class="time-label">18:30 六本松/赤坂区域晚餐</div>
+      </div>
+    </div>
+
+    <div class="day-header">
+      <h3>Day5｜10-03 机动自由日</h3>
+      <span>+</span>
+    </div>
+    <div class="day-content">
+      <p>当天可任选其一，也可选择休息，不强制安排景点。</p>
+      <div class="time-item">
+        <div class="time-label">方案A｜百道海滨 + 福冈塔</div>
+        <div class="traffic">🚇 櫛田神社前站 → 唐人町站，步行到百道海滨，福冈塔步行可达</div>
+      </div>
+      <div class="time-item">
+        <div class="time-label">方案B｜<span class="tag tag-opt">🟡 Optional</span> 能古岛 Nokonoshima</div>
+        <div class="traffic">🚇 櫛田神社前站 → 姪浜站；姪浜码头乘船，船程约10分钟，留意船班时刻表</div>
+      </div>
+    </div>
+
+    <div class="day-header">
+      <h3>Day6｜10-04 博多旧市街 & 祇园美食探店</h3>
+      <span>+</span>
+      <div class="day-content">
+        <div class="time-item">
+          <div class="time-label">09:30 博多旧市街 & 市场闲逛</div>
+          <div class="traffic">🚇 酒店步行约10分钟，区域集中，以步行+短途地铁为主</div>
+        </div>
+        <div class="time-item">
+          <div class="time-label">穿插探店：Kuromon Rojiura Bakery / Loop a Bread</div>
+        </div>
+        <div class="time-item">
+          <div class="time-label">午餐：<span class="tag tag-food">🍜 Food</span> Robata no Ito Okashi 炉端料理</div>
+        </div>
+        <div class="time-item">
+          <div class="time-label">下午：<span class="tag tag-food">🍜 Food</span> Nikuichi (Hakata) 烧肉；傍晚整理行李</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="day-header">
+      <h3>Day7｜10-05 返程日</h3>
+      <span>+</span>
+    </div>
+    <div class="day-content">
+      <div class="time-item">
+        <div class="time-label">11:00 退房，行李寄存前台</div>
+      </div>
+      <div class="time-item">
+        <div class="time-label">上午：<span class="tag tag-cafe">☕ Cafe</span> TEA ROOM flower bird 咖啡</div>
+        <p>酒店附近步行可达，节奏松弛。</p>
+      </div>
+      <div class="time-item">
+        <div class="time-label">前往福冈机场</div>
+        <div class="traffic">🚇 祇園站空港线直达福冈机场约12分钟；建议至少提前2小时抵达机场办理登机</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================== 行李清单 ====================== -->
+  <div class="card">
+    <h2>行李清单</h2>
+    <ul>
+      <li>护照 / 港澳通行证</li>
+      <li>机票行程单（电子 + 截图）</li>
+      <li>ICOCA / Suica 交通卡、日元现金</li>
+      <li>充电器 + 充电宝</li>
+      <li>Type C 转换插头（日本 A 口）</li>
+      <li>换洗衣物、防晒霜、雨伞、薄外套</li>
+      <li>常备药品、墨镜、便携水杯、环保袋</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+  // 每日折叠
+  document.querySelectorAll('.day-header').forEach(header => {
+    header.addEventListener('click', () => {
+      const content = header.nextElementSibling;
+      const symbol = header.querySelector('span:last-child');
+      content.classList.toggle('open');
+      symbol.textContent = content.classList.contains('open') ? '−' : '+';
+    });
+  });
+
+  // 深色切换
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+  });
+</script>
+
+</body>
+</html>
